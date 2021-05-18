@@ -12,6 +12,12 @@
     export let monacoLanguage = ''
 
     ipcRenderer.on('file-opened', function (evt, file, content) {
+      console.log('content', content)
+        monacoValue = content.split(/\r?\n/);
+    });
+
+    ipcRenderer.on('dbkfile-opened', function (evt, file, content) {
+      console.log('content', content)
         monacoValue = content.split(/\r?\n/);
     });
 

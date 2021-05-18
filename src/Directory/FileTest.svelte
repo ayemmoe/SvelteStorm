@@ -1,5 +1,8 @@
 <script>
     export let fileTree;
+    const fs = require('fs');
+    const ipcMain = require('electron').ipcMain;
+    const ipcRenderer = require('electron').ipcRenderer;
     const fileState = {};
     
     const toggleVisibility = (path) => {
@@ -9,16 +12,28 @@
     }
     console.log(fileTree)
 
+    const handleDblClick = (path) => {
+        console.log('clcking now',path);
+        const content = fs.readFileSync(path).toString();
+        console.log('read file',content)
+        // console.log(ipcMain);
+        console.log(ipcRenderer);
+        ipcRenderer.send('dbkfile-opened',function (evt, file, content) {
+            console.log('content fileTest',content)
+        })
+    }
+
 </script>
 
 <div class=directory>
 {#if fileTree}
 {#each fileTree as {path,name, items}}
 <ul>
+    <!-- <li>{name}</li> -->
     {#if items.length > 0}
     <li on:click={toggleVisibility(path)} class={!fileState[path] ? "liFolderClosed" : "liFolderOpen"}>{name}</li>
     {:else}
-    <li class="liFiles">{name}</li>
+    <li on:click={handleDblClick(path)} class="liFiles">{name}</li>
     {/if}
     {#if fileState[path] && items.length > 0}
       

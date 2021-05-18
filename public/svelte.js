@@ -346,7 +346,7 @@ function create_fragment$3(ctx) {
 
 let monaco_promise;
 let _monaco;
-monaco_promise = import('./monaco-299bd239.js').then(function (n) { return n.m; });
+monaco_promise = import('./monaco-1ae8e4eb.js').then(function (n) { return n.m; });
 
 monaco_promise.then(mod => {
 	_monaco = mod.default;
@@ -412,13 +412,13 @@ class Monaco_editor extends SvelteComponent {
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[3] = list[i].path;
-	child_ctx[4] = list[i].name;
-	child_ctx[5] = list[i].items;
+	child_ctx[7] = list[i].path;
+	child_ctx[8] = list[i].name;
+	child_ctx[9] = list[i].items;
 	return child_ctx;
 }
 
-// (15:0) {#if fileTree}
+// (29:0) {#if fileTree}
 function create_if_block$1(ctx) {
 	let each_1_anchor;
 	let current;
@@ -450,7 +450,7 @@ function create_if_block$1(ctx) {
 			current = true;
 		},
 		p(ctx, dirty) {
-			if (dirty & /*fileTree, fileState, toggleVisibility*/ 7) {
+			if (dirty & /*fileTree, fileState, toggleVisibility, handleDblClick*/ 15) {
 				each_value = /*fileTree*/ ctx[0];
 				let i;
 
@@ -502,11 +502,13 @@ function create_if_block$1(ctx) {
 	};
 }
 
-// (20:4) {:else}
+// (35:4) {:else}
 function create_else_block$1(ctx) {
 	let li;
-	let t_value = /*name*/ ctx[4] + "";
+	let t_value = /*name*/ ctx[8] + "";
 	let t;
+	let mounted;
+	let dispose;
 
 	return {
 		c() {
@@ -517,20 +519,31 @@ function create_else_block$1(ctx) {
 		m(target, anchor) {
 			insert(target, li, anchor);
 			append(li, t);
+
+			if (!mounted) {
+				dispose = listen(li, "click", function () {
+					if (is_function(/*handleDblClick*/ ctx[3](/*path*/ ctx[7]))) /*handleDblClick*/ ctx[3](/*path*/ ctx[7]).apply(this, arguments);
+				});
+
+				mounted = true;
+			}
 		},
-		p(ctx, dirty) {
-			if (dirty & /*fileTree*/ 1 && t_value !== (t_value = /*name*/ ctx[4] + "")) set_data(t, t_value);
+		p(new_ctx, dirty) {
+			ctx = new_ctx;
+			if (dirty & /*fileTree*/ 1 && t_value !== (t_value = /*name*/ ctx[8] + "")) set_data(t, t_value);
 		},
 		d(detaching) {
 			if (detaching) detach(li);
+			mounted = false;
+			dispose();
 		}
 	};
 }
 
-// (18:4) {#if items.length > 0}
+// (33:4) {#if items.length > 0}
 function create_if_block_2(ctx) {
 	let li;
-	let t_value = /*name*/ ctx[4] + "";
+	let t_value = /*name*/ ctx[8] + "";
 	let t;
 	let li_class_value;
 	let mounted;
@@ -541,7 +554,7 @@ function create_if_block_2(ctx) {
 			li = element("li");
 			t = text(t_value);
 
-			attr(li, "class", li_class_value = "" + (null_to_empty(!/*fileState*/ ctx[1][/*path*/ ctx[3]]
+			attr(li, "class", li_class_value = "" + (null_to_empty(!/*fileState*/ ctx[1][/*path*/ ctx[7]]
 			? "liFolderClosed"
 			: "liFolderOpen") + " svelte-1dybgjr"));
 		},
@@ -551,7 +564,7 @@ function create_if_block_2(ctx) {
 
 			if (!mounted) {
 				dispose = listen(li, "click", function () {
-					if (is_function(/*toggleVisibility*/ ctx[2](/*path*/ ctx[3]))) /*toggleVisibility*/ ctx[2](/*path*/ ctx[3]).apply(this, arguments);
+					if (is_function(/*toggleVisibility*/ ctx[2](/*path*/ ctx[7]))) /*toggleVisibility*/ ctx[2](/*path*/ ctx[7]).apply(this, arguments);
 				});
 
 				mounted = true;
@@ -559,9 +572,9 @@ function create_if_block_2(ctx) {
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
-			if (dirty & /*fileTree*/ 1 && t_value !== (t_value = /*name*/ ctx[4] + "")) set_data(t, t_value);
+			if (dirty & /*fileTree*/ 1 && t_value !== (t_value = /*name*/ ctx[8] + "")) set_data(t, t_value);
 
-			if (dirty & /*fileState, fileTree*/ 3 && li_class_value !== (li_class_value = "" + (null_to_empty(!/*fileState*/ ctx[1][/*path*/ ctx[3]]
+			if (dirty & /*fileState, fileTree*/ 3 && li_class_value !== (li_class_value = "" + (null_to_empty(!/*fileState*/ ctx[1][/*path*/ ctx[7]]
 			? "liFolderClosed"
 			: "liFolderOpen") + " svelte-1dybgjr"))) {
 				attr(li, "class", li_class_value);
@@ -575,13 +588,13 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (23:4) {#if fileState[path] && items.length > 0}
+// (38:4) {#if fileState[path] && items.length > 0}
 function create_if_block_1(ctx) {
 	let filetest;
 	let current;
 
 	filetest = new FileTest({
-			props: { fileTree: /*items*/ ctx[5].sort(func) }
+			props: { fileTree: /*items*/ ctx[9].sort(func) }
 		});
 
 	return {
@@ -594,7 +607,7 @@ function create_if_block_1(ctx) {
 		},
 		p(ctx, dirty) {
 			const filetest_changes = {};
-			if (dirty & /*fileTree*/ 1) filetest_changes.fileTree = /*items*/ ctx[5].sort(func);
+			if (dirty & /*fileTree*/ 1) filetest_changes.fileTree = /*items*/ ctx[9].sort(func);
 			filetest.$set(filetest_changes);
 		},
 		i(local) {
@@ -612,7 +625,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (16:0) {#each fileTree as {path,name, items}}
+// (30:0) {#each fileTree as {path,name, items}}
 function create_each_block(ctx) {
 	let ul;
 	let t0;
@@ -620,13 +633,13 @@ function create_each_block(ctx) {
 	let current;
 
 	function select_block_type(ctx, dirty) {
-		if (/*items*/ ctx[5].length > 0) return create_if_block_2;
+		if (/*items*/ ctx[9].length > 0) return create_if_block_2;
 		return create_else_block$1;
 	}
 
 	let current_block_type = select_block_type(ctx);
 	let if_block0 = current_block_type(ctx);
-	let if_block1 = /*fileState*/ ctx[1][/*path*/ ctx[3]] && /*items*/ ctx[5].length > 0 && create_if_block_1(ctx);
+	let if_block1 = /*fileState*/ ctx[1][/*path*/ ctx[7]] && /*items*/ ctx[9].length > 0 && create_if_block_1(ctx);
 
 	return {
 		c() {
@@ -657,7 +670,7 @@ function create_each_block(ctx) {
 				}
 			}
 
-			if (/*fileState*/ ctx[1][/*path*/ ctx[3]] && /*items*/ ctx[5].length > 0) {
+			if (/*fileState*/ ctx[1][/*path*/ ctx[7]] && /*items*/ ctx[9].length > 0) {
 				if (if_block1) {
 					if_block1.p(ctx, dirty);
 
@@ -759,6 +772,9 @@ const func = (a, b) => {
 
 function instance$2($$self, $$props, $$invalidate) {
 	let { fileTree } = $$props;
+	const fs = require("fs");
+	require("electron").ipcMain;
+	const ipcRenderer = require("electron").ipcRenderer;
 	const fileState = {};
 
 	const toggleVisibility = path => {
@@ -768,11 +784,24 @@ function instance$2($$self, $$props, $$invalidate) {
 
 	console.log(fileTree);
 
+	const handleDblClick = path => {
+		console.log("clcking now", path);
+		const content = fs.readFileSync(path).toString();
+		console.log("read file", content);
+
+		// console.log(ipcMain);
+		console.log(ipcRenderer);
+
+		ipcRenderer.send("dbkfile-opened", function (evt, file, content) {
+			console.log("content fileTest", content);
+		});
+	};
+
 	$$self.$$set = $$props => {
 		if ("fileTree" in $$props) $$invalidate(0, fileTree = $$props.fileTree);
 	};
 
-	return [fileTree, fileState, toggleVisibility];
+	return [fileTree, fileState, toggleVisibility, handleDblClick];
 }
 
 class FileTest extends SvelteComponent {
@@ -993,7 +1022,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (77:12) {#if monacoValue !== ''}
+// (83:12) {#if monacoValue !== ''}
 function create_if_block(ctx) {
 	let monaco_1;
 	let current;
@@ -1186,6 +1215,12 @@ function instance($$self, $$props, $$invalidate) {
 	let { monacoLanguage = "" } = $$props;
 
 	ipcRenderer.on("file-opened", function (evt, file, content) {
+		console.log("content", content);
+		$$invalidate(1, monacoValue = content.split(/\r?\n/));
+	});
+
+	ipcRenderer.on("dbkfile-opened", function (evt, file, content) {
+		console.log("content", content);
 		$$invalidate(1, monacoValue = content.split(/\r?\n/));
 	});
 
