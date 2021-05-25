@@ -44,21 +44,20 @@
     }
     const renameHandler = (e,path) => {
         console.log('key', e.key);
-         if(e.key === 'Enter') {
-         newName = e.target.value;
-        //  console.log("new Name inside renameHandler", newName);
-        //  console.log("path inside renameHandler", path);
-         const fullPath = path.substring(0, path.lastIndexOf('/'));
-        //  console.log('just the path', fullPath);
-        //  console.log('just the path', fullPath+'/'+newName);
-         fs.renameSync(path, fullPath+'/'+newName);
-         DirectoryData.update( currentData => {
-            return {...currentData, rename:false, activeFile: ''};
-        })
-        // e.currentTarget.value = "";
-        //  rename = false;
-        //  activeFile = '';
-     }
+        if(e.key === 'Enter') {
+        newName = e.target.value;
+        const fullPath = path.substring(0, path.lastIndexOf('/'));
+       
+        fs.renameSync(path, fullPath+'/'+newName);
+        DirectoryData.update( currentData => {
+            return {
+                ...currentData, 
+                // rename:false, 
+                activeFile: '',
+                fileChange: true
+                };
+            })
+        }
     }
     const resetRename = () => {
         console.log('In resetRename handler')
@@ -67,10 +66,7 @@
         })
     }
     
-    const deleteHandler = () => {
-        console.log('In delete handler');
-        
-    }
+    
  
 </script>
 

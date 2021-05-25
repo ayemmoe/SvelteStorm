@@ -10,26 +10,58 @@
     
     let directory;
     let rename;
+    let fileChange = false;
+    let deleteFile = false;
     
     const unsub = DirectoryData.subscribe(data =>{
         // console.log('File Directory Store Subscription');
-        // console.log('data',data);
+        console.log('data',data);
         rename = data.rename;
+        fileChange = data.fileChange;
+        deleteFile = data.deleteFile;
     });
     // store 
     onMount (()=>{
         // console.log('Directory mounted')
     });
     afterUpdate(() => {
-        if(directory) {
-        // console.log('directory', directory);
-        fs.watch(directory[0], (eventType, filename) => {
-            console.log("eventType", eventType)
-            if(eventType === 'rename'){  
-                console.log(' IN RUN BUILD');
-                readFileNames(directory);              
-            }
-        })
+        console.log('fileChange', rename);
+        console.log('directory', directory)
+        if(directory && rename) {
+            console.log('inside after upate!!')
+            //readFileNames(directory);
+
+            var fileTree = new FileTree(directory[0]);        
+            fileTree.build();
+        
+            savedTree = fileTree.items;
+            savedTree.sort((a,b) => {
+                return b.items.length - a.items.length;
+            })
+            DirectoryData.update(currentData =>{
+                return {
+                    ...currentData,
+                    fileTree:savedTree,
+                    deleteFile: false,
+                    rename: false,
+                }
+            })
+
+            // DirectoryData.update( currentData => {
+            //     return {
+            //         ...currentData, 
+            //         fileChange: false
+            //     };
+            // });
+
+        // fs.watch(directory[0], (eventType, filename) => {
+        //     console.log("eventType", eventType)
+        //     if(eventType === 'rename'){  
+        //         console.log(' IN RUN BUILD');
+        //         readFileNames(directory);              
+        //     }
+        // })
+        
         }
     });
  
@@ -40,7 +72,20 @@
     ipcRenderer.on('folder-opened', function (evt, file, content) {
         directory = content;
         if (directory && directory[0]){           
-            readFileNames(directory);
+            // readFileNames(directory);
+            var fileTree = new FileTree(directory[0]);        
+            fileTree.build();
+        
+            savedTree = fileTree.items;
+            savedTree.sort((a,b) => {
+                return b.items.length - a.items.length;
+            })
+            DirectoryData.update(currentData =>{
+                return {
+                    ...currentData,
+                    fileTree:savedTree,
+                }
+            })
         }
     })
     

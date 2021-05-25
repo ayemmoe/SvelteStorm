@@ -15,7 +15,11 @@
         console.log('Delete Handler is clicked!');
         fs.unlinkSync(filePath);
         DirectoryData.update( currentData => {
-            return {...currentData, deleteFile:true};
+            return {
+                ...currentData, 
+                deleteFile:true,
+                fileChange:true
+            };
             
         })
     }

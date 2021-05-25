@@ -7,6 +7,7 @@ const DirectoryData = writable({
     activeFile: '',
     rename: false,
     deleteFile: false,
+    fileChange: false,
 });
 
 
